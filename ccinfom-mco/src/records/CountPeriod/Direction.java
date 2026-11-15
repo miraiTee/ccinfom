@@ -2,24 +2,16 @@ package records.CountPeriod;
 
 public enum Direction {
 
-    Northbound(1), 
-    Southbound(2);
+    Northbound("Northbound"), 
+    Southbound("Southbound");
 
-    public final int dirID;
+    public final String dirID;
 
-    Direction(int dirID){        
+    Direction(String dirID){        
         this.dirID = dirID;
     }
 
-    public static Direction stringToEnum(String text) {
-        if (text == null) {
-            return null; 
-        }
-
-        try {
-            return Direction.valueOf(text);
-        } catch (IllegalArgumentException e) {
-            return null; 
-        }
+    public String getID(){
+        return dirID;
     }
 }
