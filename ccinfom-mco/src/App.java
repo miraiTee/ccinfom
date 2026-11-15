@@ -5,6 +5,7 @@ import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.util.Scanner;
+import reports.CompletedPoint.CICReport;
 
 public class App {
     
@@ -84,7 +85,8 @@ public class App {
                     // Device Counting Participation
                     break;
                 case 3:
-                    // Completed Interval Coverage
+                    CICReport CICreport = new CICReport(conn);
+                    CICreport.run();
                     break;
                 case 4:
                     // Classified Vehicle Volumes
@@ -97,16 +99,20 @@ public class App {
     }
 
     public static int mainMenu(){
+        System.out.println("");
         System.out.println("Choose ff: ");
         System.out.println("[ 1 ] : Check Records");
         System.out.println("[ 2 ] : Check Reports");
         System.out.println("[ 3 ] : Change Profile");
         System.out.println("[ 4 ] : Quit App");
         
-        return s.nextInt();
+        int choice = s.nextInt();
+        s.nextLine();
+        return choice;
     }
 
     public static int recordMenu(){
+        System.out.println("");
         System.out.println("Choose records to check: ");
         System.out.println("[ 1 ] : Points");
         System.out.println("[ 2 ] : Device");
@@ -114,20 +120,26 @@ public class App {
         System.out.println("[ 4 ] : VehCount");
         System.out.println("[ 5 ] : RadarCal");
 
-        return s.nextInt();
+        int choice = s.nextInt();
+        s.nextLine();
+        return choice;
     }
 
     public static int reportMenu(){
-        System.out.print("Choose report to check: ");
-        System.out.print("[ 1 ] : Completed Traffic Counts by Monitoring Point");
-        System.out.print("[ 2 ] : Device Counting Participation");
-        System.out.print("[ 3 ] : Completed Interval Coverage");
-        System.out.print("[ 4 ] : Classified Vehicle Volumes");
+        System.out.println("");
+        System.out.println("Choose report to check: ");
+        System.out.println("[ 1 ] : Completed Traffic Counts by Monitoring Point");
+        System.out.println("[ 2 ] : Device Counting Participation");
+        System.out.println("[ 3 ] : Completed Interval Coverage");
+        System.out.println("[ 4 ] : Classified Vehicle Volumes");
         
-        return s.nextInt();
+        int choice = s.nextInt();
+        s.nextLine();
+        return choice;
     }
 
     public static Profile enterProfile(){
+        System.out.println("");
         System.out.print("Enter username: ");
         String username = s.nextLine();
         System.out.print("Enter password: ");

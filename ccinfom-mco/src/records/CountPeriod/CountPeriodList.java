@@ -1,7 +1,12 @@
+// mago
 package records.CountPeriod;
 
 import java.util.ArrayList;
 
+/***
+ * Count period list.
+ * CountPeriod
+ */
 public class CountPeriodList {
     
     private ArrayList<CountPeriod> countPeriods;

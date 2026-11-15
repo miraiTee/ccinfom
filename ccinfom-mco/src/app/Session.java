@@ -1,7 +1,18 @@
+// mago
 package app;
+
+
 
 import java.sql.Connection;
 
+/***
+ * Singleton class used to define a user's session in the app.
+ * If the user's profile is changed, soo too does the session's instance is.
+ * 
+ * Contains a profile and valid connection with it.
+ * 
+ * Session
+ */
 public class Session {
     private static Session instance;
     private Profile userProfile;

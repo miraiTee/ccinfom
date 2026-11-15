@@ -1,3 +1,4 @@
+// mago
 package records.CountPeriod;
 
 import java.sql.Connection;
@@ -7,6 +8,10 @@ import java.sql.SQLException;
 import java.sql.Timestamp;
 import java.time.LocalDateTime;
 
+/***
+ * Count period records.
+ * CountPeriod
+ */
 public class CountPeriodRecords {
 
     private Connection conn;

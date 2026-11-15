@@ -1,7 +1,12 @@
+// mago
 package records.CountPeriod;
 
 import java.time.*;
 
+/***
+ * Count period object.
+ * CountPeriod
+ */
 public class CountPeriod implements Comparable<CountPeriod> {
     private String periodNo;
     private String pointNo;
