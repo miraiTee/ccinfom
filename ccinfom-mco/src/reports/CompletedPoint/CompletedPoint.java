@@ -54,10 +54,10 @@ public class CompletedPoint {
 
     @Override
     public String toString() {
-        return "Point: " + pointNo + 
-               " | Direction: " + directn + 
-               " | Method: " + method + 
-               " | Completed Periods: " + completedPeriod + 
-               " | Earliest Interval: " + startAt;
+        return pointNo + 
+               " | " + directn + 
+               " | " + method + 
+               " | " + completedPeriod + 
+               " | " + startAt;
     }
 }
