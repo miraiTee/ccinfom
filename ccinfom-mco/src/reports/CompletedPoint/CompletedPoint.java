@@ -37,16 +37,18 @@ public class CompletedPoint {
     private Direction directn;
     private Method method;
     private int completedPeriod;
-    private LocalDateTime startAt;
+    private LocalDateTime earliestStart;
+    private LocalDateTime latestStart;
 
     public CompletedPoint(String pointNo, Direction directn, Method method, 
-        int completedPeriod, LocalDateTime startAt){
+        int completedPeriod, LocalDateTime earliestStart, LocalDateTime latestStart){
 
         this.pointNo = pointNo;
         this.directn = directn;
         this.method = method;
         this.completedPeriod = completedPeriod;
-        this.startAt = startAt;
+        this.earliestStart = earliestStart;
+        this.latestStart = latestStart;
 
     }
 
@@ -58,6 +60,7 @@ public class CompletedPoint {
                " | " + directn + 
                " | " + method + 
                " | " + completedPeriod + 
-               " | " + startAt;
+               " | " + earliestStart +
+               " | " + latestStart;
     }
 }
