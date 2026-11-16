@@ -24,7 +24,12 @@ public class App {
                     case 1: handleRecords(); break;
                     case 2: handleReports(); break;
                     case 3: Session.getInstance().invalidate(); break;
-                    case 4: running = false; break;
+                    case 4: 
+                        if (Session.isAuthenticated()) {
+                            Session.getInstance().invalidate();
+                        }
+                        running = false; 
+                        break;
                     default: System.out.println("Invalid choice");
                 }
             }
@@ -33,6 +38,8 @@ public class App {
 
 
     private static void handleLogin() {
+
+
         Profile profile = enterProfile();
         Database database = new Database();
         try {

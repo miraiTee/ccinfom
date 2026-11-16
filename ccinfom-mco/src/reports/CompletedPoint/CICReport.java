@@ -238,8 +238,10 @@ public class CICReport {
 
             try {
                 filterMinCount = s.nextInt();
+                if (filterMinCount <= 0)
+                    throw new Exception("Only positive/0 min counts.");
             } catch (Exception e){
-                filterMinCount = 0;
+                filterMinCount = -1;
                 pass = false;
                 System.err.println("Invalid Input.");
             }

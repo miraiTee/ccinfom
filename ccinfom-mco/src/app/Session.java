@@ -4,6 +4,7 @@ package app;
 
 
 import java.sql.Connection;
+import java.sql.SQLException;
 
 /***
  * Singleton class used to define a user's session in the app.
@@ -33,6 +34,14 @@ public class Session {
     }
 
     public void invalidate() {
+        try {
+            if (connection != null && !connection.isClosed()) {
+                connection.close();
+                System.out.println("Database connection closed.");
+            }
+        } catch (SQLException e) {
+            System.err.println("Error closing connection: " + e.getMessage());
+        }
         instance = null;
     }
 
