@@ -68,7 +68,7 @@ public class CICReport {
             printReport();
         } catch (SQLException e){
             e.printStackTrace();
-            throw new IllegalArgumentException("Skibidi");
+            throw new IllegalArgumentException("Failed generating report.");
         }
     }
 
@@ -152,7 +152,7 @@ public class CICReport {
 
         // Distinct Pts
         while (true){
-        System.err.println("Choose distinct points to analyze.");
+        System.out.println("Choose distinct points to analyze. [ Leave Blank for all pts ]");
         int i = 1;
         for (String distinctPoint : distinctPoints){
             System.out.println("[ " + Integer.toString(i) + " ] " + distinctPoint);
@@ -160,12 +160,22 @@ public class CICReport {
         }
             try{
                 String input = s.nextLine();
-                String[] distPoints = input.split(" ");
-                for (String distinctPoint : distPoints){
-                    if (distinctPoints.contains(distinctPoint))
+
+                if (input.isEmpty()){
+                    for (String distinctPoint : distinctPoints){
                         filterDistinctPoints.add(distinctPoint);
-                    else
-                        throw new Exception("Invalid Input");
+                    }
+                }
+
+                else {
+
+                    String[] distPoints = input.split(" ");
+                    for (String distinctPoint : distPoints){
+                        if (distinctPoints.contains(distinctPoint))
+                            filterDistinctPoints.add(distinctPoint);
+                        else
+                            throw new Exception("Invalid Input");
+                    }
                 }
             } catch(Exception e){
                 filterDistinctPoints.clear();
@@ -179,21 +189,22 @@ public class CICReport {
         while (true) { 
             System.out.println("Choose direction/s to analyze.");
             System.out.println("[ 1 ]: Northbound");
-            System.out.println("[ 2 ]: Southbound");           
+            System.out.println("[ 2 ]: Southbound");   
+            System.out.println("[ 3 ]: All");        
 
             try {
                 String input = s.nextLine();
-
-                String[] directions = input.split(" ");
-
-                for (String direction : directions){
-                    if (direction.equals("Northbound"))
-                        filterDirection.add(direction);
-                    else if (direction.equals("Southbound"))
-                        filterDirection.add(direction);
-                    else
-                        throw new Exception("Invalid Input.");
+            
+                if (input.equals("Northbound"))
+                    filterDirection.add(input);
+                else if (input.equals("Southbound"))
+                    filterDirection.add(input);
+                else if (input.equals("All")){
+                    filterDirection.add("Northbound");
+                    filterDirection.add("Southbound");
                 }
+                else
+                    throw new Exception("Invalid Input.");
 
             } catch (Exception e){
                 filterDirection.clear();
@@ -208,20 +219,21 @@ public class CICReport {
             System.out.println("Choose method/s to analyze.");
             System.out.println("[ 1 ]: Manual");
             System.out.println("[ 2 ]: Device");
+            System.out.println("[ 3 ]: All");
 
             try {
-                String input = s.nextLine();
+                String method = s.nextLine();
 
-                String[] methods = input.split(" ");
-
-                for (String method : methods){
                     if (method.equals("Manual"))
                         filterMethod.add(method);
                     else if (method.equals("Device"))
                         filterMethod.add(method);
+                    else if (method.equals("All")){
+                        filterMethod.add("Manual");
+                        filterMethod.add("Device");
+                    }
                     else
                         throw new Exception("Invalid Input.");
-                }
 
             } catch (Exception e){
                 filterMethod.clear();
@@ -238,7 +250,7 @@ public class CICReport {
 
             try {
                 filterMinCount = s.nextInt();
-                if (filterMinCount <= 0)
+                if (filterMinCount < 0)
                     throw new Exception("Only positive/0 min counts.");
             } catch (Exception e){
                 filterMinCount = -1;

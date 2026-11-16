@@ -31,23 +31,25 @@ public class CountPeriodList {
         }
     }
 
-    private void add(CountPeriod countPeriod){
+    public void add(CountPeriod countPeriod){
         if (countPeriods.contains(countPeriod))
             throw new IllegalArgumentException("Cannot add the exact same countPeriod twice");
+
+        
 
         validatePointDirection(countPeriod);
         countPeriods.add(countPeriod);
         sort();
     }
 
-    private void remove(CountPeriod countPeriod){
+    public void remove(CountPeriod countPeriod){
         if (countPeriods.contains(countPeriod))
             countPeriods.remove(countPeriod);
 
         sort();
     }
 
-    private void sort() {
+    public void sort() {
         countPeriods.sort(null); 
     }
 }

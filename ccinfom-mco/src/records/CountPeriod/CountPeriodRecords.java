@@ -75,35 +75,36 @@ public class CountPeriodRecords {
     }
 
     public void readCountPeriod(CountPeriodList countPeriodList) throws SQLException {
-        String sql = "SELECT * FROM students";
+        String sql = "SELECT * FROM countPeriod";
 
-        try (Connection conn = Geeks.getConnection();
-             Statement stmt = conn.createStatement();
-             ResultSet rs = stmt.executeQuery(sql)) {
+        try (PreparedStatement stmt = conn.prepareStatement(sql)){
+        
+            try (ResultSet rs = stmt.executeQuery()){
 
-            while (rs.next()) {
-                String periodNo = rs.getString("periodno");
-                String pointNo = rs.getString("pointno");
+                while (rs.next()) {
+                    String periodNo = rs.getString("periodno");
+                    String pointNo = rs.getString("pointno");
 
-                Direction directn = Direction.valueOf(rs.getString("directn"));
+                    Direction directn = Direction.valueOf(rs.getString("directn"));
 
-                LocalDateTime startAt = rs.getTimestamp("startat").toLocalDateTime();
-                LocalDateTime endAt = rs.getTimestamp("endat").toLocalDateTime();
+                    LocalDateTime startAt = rs.getTimestamp("startat").toLocalDateTime();
+                    LocalDateTime endAt = rs.getTimestamp("endat").toLocalDateTime();
 
-                Method method = Method.valueOf(rs.getString("method"));
+                    Method method = Method.valueOf(rs.getString("method"));
 
-                String devNo = rs.getString("devno");
-                
-                Status status = Status.valueOf(rs.getString("status"));
+                    String devNo = rs.getString("devno");
+                    
+                    Status status = Status.valueOf(rs.getString("status"));
 
-                String notes = rs.getString("notes");
-                int revNo = rs.getInt("revno");
+                    String notes = rs.getString("notes");
+                    int revNo = rs.getInt("revno");
 
-                CountPeriod countPeriod = new CountPeriod(periodNo, pointNo, directn, 
-                                                            startAt, endAt, method, 
-                                                            devNo, status, notes, revNo);
+                    CountPeriod countPeriod = new CountPeriod(periodNo, pointNo, directn, 
+                                                                startAt, endAt, method, 
+                                                                devNo, status, notes, revNo);
 
-                countPeriodList.add(countPeriod);
+                    countPeriodList.add(countPeriod);
+                }
             }
         } catch (Exception e) {
             e.printStackTrace();
