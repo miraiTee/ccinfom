@@ -5,6 +5,7 @@ import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.util.Scanner;
+import records.CountPeriod.CountPeriodRecords;
 import reports.CompletedPoint.CICReport;
 
 public class App {
@@ -64,7 +65,8 @@ public class App {
                     // devices
                     break;
                 case 3:
-                    // countperiods
+                    CountPeriodRecords countPeriodRecords = new CountPeriodRecords(conn);
+                    countPeriodRecords.run();
                     break;
                 case 4:
                     // vehcount

@@ -14,14 +14,4 @@ public enum Status {
     public String getID(){
         return statusID;
     }
-
-    public static Status fromString(String text) {
-        for (Status s : Status.values()) {
-            if (s.statusID.equalsIgnoreCase(text)) {
-                return s;
-            }
-        }
-
-        throw new IllegalArgumentException("No match found");
-    }
 }

@@ -38,7 +38,7 @@ import records.CountPeriod.Method;
  */
 
 public class CICReport {
-    public static Scanner s = new Scanner(System.in);
+    private Scanner s = new Scanner(System.in);
 
     private ArrayList <CompletedPoint> completedPoints = new ArrayList<>();
     private Connection conn;
@@ -64,17 +64,21 @@ public class CICReport {
 
     public void run(){
         try{
-            generateReport(conn);
+            generateReport();
             printReport();
+            s.close();
         } catch (SQLException e){
             e.printStackTrace();
             throw new IllegalArgumentException("Failed generating report.");
         }
     }
 
-    public void checkDistinctPoints(Connection conn) throws SQLException {
-        String sql = "SELECT DISTINCT pointno FROM countperiod WHERE status = 'Completed'";
-
+    public void checkDistinctPoints() throws SQLException {
+        String sql = """ 
+        SELECT DISTINCT pointno 
+        FROM countperiod 
+        WHERE status = 'Completed/' 
+        """;
 
         try (PreparedStatement stmt = conn.prepareStatement(sql);
             ResultSet rs = stmt.executeQuery()) {
@@ -84,8 +88,8 @@ public class CICReport {
         }
     }
 
-    public void generateReport(Connection conn) throws SQLException {
-        checkDistinctPoints(conn);
+    public void generateReport() throws SQLException {
+        checkDistinctPoints();
         filterMenu();
 
 
@@ -94,7 +98,7 @@ public class CICReport {
         query.append("COUNT(periodno) AS CompletedPeriods, ");
         query.append("MIN(startat) AS EarliestStart, ");
         query.append("MAX(startat) AS LatestStart ");
-        query.append("FROM   countperiod ");
+        query.append("FROM countperiod ");
         query.append("WHERE status = 'Completed' ");
 
         query.append(filterTemplate());
@@ -127,8 +131,8 @@ public class CICReport {
                 while (rs.next()){
                     completedPoints.add(new CompletedPoint(
                     rs.getString("pointno"),
-                    Direction.fromString(rs.getString("directn")),
-                    Method.fromString(rs.getString("method")),
+                    Direction.valueOf(rs.getString("directn")),
+                    Method.valueOf(rs.getString("method")),
                     rs.getInt("CompletedPeriods"),
                     rs.getTimestamp("EarliestStart").toLocalDateTime(),
                     rs.getTimestamp("LatestStart").toLocalDateTime()
@@ -168,7 +172,6 @@ public class CICReport {
                 }
 
                 else {
-
                     String[] distPoints = input.split(" ");
                     for (String distinctPoint : distPoints){
                         if (distinctPoints.contains(distinctPoint))

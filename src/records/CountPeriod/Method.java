@@ -19,14 +19,4 @@ public enum Method {
     public String getID(){
         return methodID;
     }
-
-    public static Method fromString(String text) {
-        for (Method m : Method.values()) {
-            if (m.methodID.equalsIgnoreCase(text)) {
-                return m;
-            }
-        }
-
-        throw new IllegalArgumentException("No match found");
-    }
 }

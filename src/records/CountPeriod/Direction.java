@@ -19,14 +19,4 @@ public enum Direction {
     public String getID(){
         return dirID;
     }
-
-    public static Direction fromString(String text) {
-        for (Direction d : Direction.values()) {
-            if (d.dirID.equalsIgnoreCase(text)) {
-                return d;
-            }
-        }
-
-        throw new IllegalArgumentException("No match found");
-    }
 }

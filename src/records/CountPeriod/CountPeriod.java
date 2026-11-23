@@ -8,7 +8,9 @@ import java.time.*;
  * CountPeriod
  */
 public class CountPeriod implements Comparable<CountPeriod> {
-    private String periodNo;
+    private PeriodNo periodNo;
+
+    // expect a class from point as pointno
     private String pointNo;
 
     private Direction directn;
@@ -18,6 +20,7 @@ public class CountPeriod implements Comparable<CountPeriod> {
 
     private Method method;
 
+    // expect a class from device as devno
     private String devNo;
 
     private Status status;
@@ -27,13 +30,13 @@ public class CountPeriod implements Comparable<CountPeriod> {
     private int revno;
 
     // Existing Count Period
-    public CountPeriod(String periodNo, String pointNo, Direction directn, 
+    public CountPeriod(PeriodNo periodNo, String pointNo, Direction directn, 
         LocalDateTime startAt, LocalDateTime endAt, Method method,
-        String devNo, Status status, String notes, int revno){
+        String devNo, Status status, String notes, int revno) {
 
-        validateFieldLength(periodNo, 16);
-        validateFieldLength(pointNo, 12);
-        validateFieldLength(devNo, 12);
+        // validateFieldLength(periodNo, 16);
+        // validateFieldLength(pointNo, 12);
+        // validateFieldLength(devNo, 12);
         validateFieldLength(notes, 255);
 
         validateStartToEnd(startAt, endAt);
@@ -56,84 +59,37 @@ public class CountPeriod implements Comparable<CountPeriod> {
         this.revno = revno;
     }
 
-    // New Count Period (if method == DEVICE)
+    // New Count Period (from app)
     public CountPeriod(String periodNo, String pointNo, Direction directn, 
-        LocalDateTime startAt, String devNo, String notes){
+        LocalDateTime startAt, String devNo){
 
-        validateFieldLength(periodNo, 16);
-        validateFieldLength(pointNo, 12);
-        validateFieldLength(devNo, 12);
+        // validateFieldLength(periodNo, 16);
+        // validateFieldLength(pointNo, 12);
+        // validateFieldLength(devNo, 12);
         validateFieldLength(notes, 255);
         
-        validateStartToEnd(startAt, endAt);
-        validateMethod(method, devNo);
-        validateStatus(status, notes, 1);
-
-        this.periodNo = periodNo;
+        this.periodNo = new PeriodNo(periodNo);
         this.pointNo = pointNo;
 
         this.directn = directn;
 
         this.startAt = startAt;
-        this.endAt = startAt.plusMinutes(15) ;
+        this.endAt = startAt.plusMinutes(15);
 
         this.method = Method.Device;
         this.devNo = devNo;
 
         this.status = Status.Draft;
-        this.notes = notes;
+        this.notes = null;
         this.revno = 1;
     
-        validateStartToEnd(startAt, endAt);
-        validateMethod(method, null);
-    }
-
-    // New Count Period (if method == Manual)
-    public CountPeriod(String periodNo, String pointNo, Direction directn, 
-        LocalDateTime startAt, String notes){
-
-        validateFieldLength(periodNo, 16);
-        validateFieldLength(pointNo, 12);
-        validateFieldLength(notes, 255);
-
-        validateStatus(status, notes, 1);
-
-        this.periodNo = periodNo;
-        this.pointNo = pointNo;
-
-        this.directn = directn;
-
-        this.startAt = startAt;
-        this.endAt = startAt.plusMinutes(15) ;
-
-        this.method = Method.Manual;
-        this.devNo = null;
-
-        this.status = Status.Draft;
-        this.notes = notes;
-        this.revno = 1;
-
-        validateStartToEnd(startAt, endAt);
-        validateMethod(method, null);
-    }
-
-    private void validateDeviceInVicinity(String pointNo, String devNo){
-
-    }
-
-    private void validateFieldLength(String periodNo, String pointNo, String devNo, String notes){
-        if (periodNo.length() > 16) 
-            throw new IllegalArgumentException("Period No must not be > 16 chars");
-        if (pointNo.length() > 12) 
-            throw new IllegalArgumentException("Point No must not be > 12 chars");
-        if (devNo.length() > 12) 
-            throw new IllegalArgumentException("Device No must not be > 16 chars");
-        if (notes.length() > 255) 
-            throw new IllegalArgumentException("Notes must not be > 16 chars");
+        validateStartToEnd(this.startAt, this.endAt);
+        validateMethod(this.method, this.devNo);
+        validateStatus(this.status, this.notes, this.revno);
     }
 
     private void validateFieldLength(String string, int maxlength){
-        if (string.length() > maxlength) 
+        if (string != null && string.length() > maxlength) 
             throw new IllegalArgumentException(string + " must not be > " + Integer.toString(maxlength) + " chars");
     }
 
@@ -165,12 +121,14 @@ public class CountPeriod implements Comparable<CountPeriod> {
             throw new NullPointerException("Method and Device Number cannot be both null");
         }
 
-        if (method == Method.Manual)
+        if (method == Method.Manual) {
             if (devNo != null)
                 throw new IllegalArgumentException("Manual must not have a device number.");
-        else
+        }
+        else {
             if (devNo == null)
                 throw new NullPointerException("Device must have a device number.");
+        }
 
         if (devNo != null)
             validateDeviceNumber(devNo);
@@ -187,10 +145,10 @@ public class CountPeriod implements Comparable<CountPeriod> {
         String prefix = devNo.substring(0, 2);
         String no = devNo.substring(2, 5);
 
-        if (prefix.equals("DV"))
+        if (!prefix.equals("DV"))
             throw new IllegalArgumentException("Device Prefix does not match.");
 
-        if (no.contains("[a-zA-Z]+") == true)
+        if (!no.matches("\\d{3}") == true)
             throw new IllegalArgumentException("Device No contains a non-numeric character.");
     }
 
@@ -212,7 +170,7 @@ public class CountPeriod implements Comparable<CountPeriod> {
             throw new IllegalArgumentException("RevNo must not be 0 or negative.");
     }
 
-    public String getPeriodNo() { return periodNo; }
+    public PeriodNo getPeriodNo() { return periodNo; }
     public String getPointNo() { return pointNo; }
 
     public Direction getDirectn() { return directn; };
@@ -238,6 +196,20 @@ public class CountPeriod implements Comparable<CountPeriod> {
 
     @Override
     public int compareTo(CountPeriod other) {
-        return this.periodNo.compareTo(other.periodNo);
+        return this.getPeriodNo().toString().compareTo(other.getPeriodNo().toString());
+    }
+
+    @Override
+    public String toString() {
+        return periodNo + 
+               " | " + pointNo + 
+               " | " + directn.getID() + 
+               " | " + startAt + 
+               " | " + endAt +
+               " | " + method.getID() +
+               " | " + devNo +
+               " | " + status.getID() +
+               " | " + notes +
+               " | " + revno;
     }
 }
