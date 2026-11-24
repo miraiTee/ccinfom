@@ -29,6 +29,9 @@ public class ReadPeriods {
     private final List<String> devices = new ArrayList<>();
     private Status status;
 
+    private List<String> activePoints;
+    private List<String> activeDevices;
+
     public ReadPeriods(Connection conn, Scanner s) {
         this.conn = conn;
         this.s = s;
@@ -140,15 +143,12 @@ public class ReadPeriods {
 
     private void setPoints() {
         try {
-            List<String> activePoints = getActiveValues(
-                    "SELECT pointno FROM point WHERE active = 1",
-                    "pointno"
-            );
+            List<String> values = getActivePoints();
 
-            if (activePoints.isEmpty()) {
+            if (values.isEmpty()) {
                 System.out.println("No active points found.");
             } else {
-                System.out.println("Available active points: " + activePoints);
+                System.out.println("Available active points: " + values);
             }
 
             System.out.print("Enter point numbers separated by commas (blank to clear): ");
@@ -160,15 +160,12 @@ public class ReadPeriods {
 
     private void setDevices() {
         try {
-            List<String> activeDevices = getActiveValues(
-                    "SELECT devno FROM device WHERE active = 1",
-                    "devno"
-            );
+            List<String> values = getActiveDevices();
 
-            if (activeDevices.isEmpty()) {
+            if (values.isEmpty()) {
                 System.out.println("No active devices found.");
             } else {
-                System.out.println("Available active devices: " + activeDevices);
+                System.out.println("Available active devices: " + values);
             }
 
             System.out.print("Enter device numbers separated by commas (blank to clear): ");
@@ -397,5 +394,19 @@ public class ReadPeriods {
         method = null;
         devices.clear();
         status = null;
+    }
+
+    private List<String> getActivePoints() throws SQLException {
+        return getActiveValues(
+            "SELECT pointno FROM point WHERE active = 1",
+            "pointno"
+        );
+    }
+
+    private List<String> getActiveDevices() throws SQLException {
+        return getActiveValues(
+            "SELECT devno FROM device WHERE active = 1",
+            "devno"
+        );
     }
 }

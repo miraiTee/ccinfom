@@ -96,6 +96,14 @@ public class CreatePeriods {
     }
 
     public void setPoint() {
+    
+        try {
+            getPoints();
+        } catch (SQLException e) {
+            System.out.println("Could not refresh active points: " + e.getMessage());
+            return;
+        }
+
         if (activePoints.isEmpty()) {
             System.out.println("No active points.");
             return;
@@ -299,6 +307,14 @@ public class CreatePeriods {
 
     public void setDevice() {
 
+        try {
+            getDevices();
+        } catch (SQLException e) {
+            System.out.println("Could not refresh active devices: " + e.getMessage());
+            return;
+        }
+
+
         if (method == Method.Manual){
             System.out.println("Manual Method is set. Change it first");
             return;
@@ -334,21 +350,10 @@ public class CreatePeriods {
         }
     }
 
-    public void flush() {
-        activePoints.clear();
-        activeDevices.clear();
-
-        try {
-            getPoints();
-            getDevices();
-        } catch (SQLException e) {
-            System.out.println("Could not load points or devices: " + e.getMessage());
-        }
-    }
-
     public void getPoints() throws SQLException {
-        String sql = "SELECT pointno FROM point WHERE active = 1";
+        activePoints.clear();
 
+        String sql = "SELECT pointno FROM point WHERE active = 1";
         try (PreparedStatement stmt = conn.prepareStatement(sql);
             ResultSet rs = stmt.executeQuery()) {
             while (rs.next()) {
@@ -358,8 +363,9 @@ public class CreatePeriods {
     }
 
     public void getDevices() throws SQLException {
-        String sql = "SELECT devno FROM device WHERE active = 1";
+        activeDevices.clear();
 
+        String sql = "SELECT devno FROM device WHERE active = 1";
         try (PreparedStatement stmt = conn.prepareStatement(sql);
             ResultSet rs = stmt.executeQuery()) {
             while (rs.next()) {
