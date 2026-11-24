@@ -497,8 +497,8 @@ public class CreatePeriods {
                     if (devNo != null && devNo.equals(existingDevNo)) {
                         System.out.println(
                                 "Device " + devNo
-                                        + " is already assigned to an overlapping period: "
-                                        + existingPeriodNo);
+                                + " is already assigned to an overlapping period: "
+                                + existingPeriodNo);
                         return true;
                     }
                 }

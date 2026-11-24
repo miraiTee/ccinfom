@@ -22,9 +22,9 @@ public class CountPeriodRecords {
     public CountPeriodRecords(Connection conn){
         this.conn = conn;
         create = new CreatePeriods(conn, s);
-        // read = new ReadPeriods(conn, s);
-        // update = new UpdatePeriods(conn, s);
-        // delete = new DeletePeriods(conn, s);
+        read = new ReadPeriods(conn, s);
+        update = new UpdatePeriods(conn, s);
+        delete = new DeletePeriods(conn, s);
     }
 
     public void run(){
@@ -37,9 +37,9 @@ public class CountPeriodRecords {
 
             switch(choice){
                 case 1 -> create.run();
-                // case 2 -> read.run();
-                // case 3 -> update.run();
-                // case 4 -> delete.run();
+                case 2 -> read.run();
+                case 3 -> update.run();
+                case 4 -> delete.run();
                 case 0 -> System.out.print("bye");
                 default -> System.out.print("Invalid choice");
             }

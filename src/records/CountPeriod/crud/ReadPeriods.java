@@ -63,7 +63,7 @@ public class ReadPeriods {
 
         try {
             PeriodNo periodNo = new PeriodNo(input);
-            String sql = "SELECT * FROM periodcount WHERE periodno = ?";
+            String sql = "SELECT * FROM countperiod WHERE periodno = ?";
 
             try (PreparedStatement stmt = conn.prepareStatement(sql)) {
                 stmt.setString(1, periodNo.toString());
@@ -212,7 +212,7 @@ public class ReadPeriods {
     }
 
     private void executeSearch() {
-        StringBuilder sql = new StringBuilder("SELECT * FROM periodcount WHERE 1 = 1");
+        StringBuilder sql = new StringBuilder("SELECT * FROM countperiod WHERE 1 = 1");
         List<Object> params = new ArrayList<>();
 
         if (initPeriodNo != null) {
@@ -281,31 +281,43 @@ public class ReadPeriods {
 
     private void displayResults(PreparedStatement stmt) throws SQLException {
         try (ResultSet rs = stmt.executeQuery()) {
+            System.out.printf(
+                    "%-12s | %-8s | %-12s | %-23s | %-23s | %-10s | %-10s | %-10s | %-55s | %s%n",
+                    "periodno", "pointno", "directn", "startat", "endat",
+                    "method", "devno", "status", "notes", "revno");
+
+            System.out.println(
+                    "-------------|----------|--------------|-------------------------|"
+                + "-------------------------|------------|------------|------------|"
+                + "---------------------------------------------------------|---------");
+
             boolean found = false;
 
             while (rs.next()) {
                 found = true;
+
                 System.out.printf(
-                        "Period: %s | Point: %s | Directn: %s | Start: %s"
-                                + " | End: %s | Method: %s | Device: %s"
-                                + " | Status: %s | Notes: %s | Revision: %d%n",
-                        rs.getString("periodno"),
-                        rs.getString("pointno"),
-                        rs.getString("directn"),
-                        rs.getTimestamp("startat"),
-                        rs.getTimestamp("endat"),
-                        rs.getString("method"),
-                        rs.getString("devno"),
-                        rs.getString("status"),
-                        rs.getString("notes"),
-                        rs.getInt("revno")
-                );
+                        "%-12s | %-8s | %-12s | %-23s | %-23s | %-10s | %-10s | %-10s | %-55s | %s%n",
+                        valueOrDash(rs.getString("periodno")),
+                        valueOrDash(rs.getString("pointno")),
+                        valueOrDash(rs.getString("directn")),
+                        valueOrDash(rs.getString("startat")),
+                        valueOrDash(rs.getString("endat")),
+                        valueOrDash(rs.getString("method")),
+                        valueOrDash(rs.getString("devno")),
+                        valueOrDash(rs.getString("status")),
+                        valueOrDash(rs.getString("notes")),
+                        valueOrDash(rs.getString("revno")));
             }
 
             if (!found) {
-                System.out.println("No matching periods found.");
+                System.out.println("No matching period found.");
             }
         }
+    }
+
+    private String valueOrDash(String value) {
+        return value == null ? "-" : value;
     }
 
     private LocalDateTime readOptionalDateTime(String prompt) {

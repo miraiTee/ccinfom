@@ -11,7 +11,6 @@ public class DeletePeriods {
     private final Scanner s;
 
     // Change this to the actual child/category table name.
-    private static final String CATEGORY_TABLE = "periodcategory";
 
     public DeletePeriods(Connection conn, Scanner s) {
         this.conn = conn;
@@ -19,20 +18,64 @@ public class DeletePeriods {
     }
 
     public void run() {
-        System.out.print("Enter the period reference to delete: ");
-        String periodNo = s.nextLine().trim();
-
-        if (periodNo.isEmpty()) {
-            System.out.println("Period reference cannot be empty.");
-            return;
-        }
-
         try {
+            if (!showPeriods()) {
+                return;
+            }
+
+            System.out.print("Enter the period reference to delete: ");
+            String periodNo = s.nextLine().trim();
+
+            if (periodNo.isEmpty()) {
+                System.out.println("Period reference cannot be empty.");
+                return;
+            }
+
             deleteDraftPeriod(periodNo);
         } catch (SQLException e) {
             System.out.println("Could not delete period: " + e.getMessage());
         }
     }
+
+    private boolean showPeriods() throws SQLException {
+        String sql = """
+                SELECT p.periodno,
+                    p.status,
+                    0 AS categoryrows
+                FROM countperiod p
+                WHERE LOWER(p.status) = 'draft'
+                AND NOT EXISTS (
+                    SELECT 1
+                    FROM vehcount v
+                    WHERE v.periodno = p.periodno
+                )
+                ORDER BY p.periodno
+                """;
+
+        try (PreparedStatement stmt = conn.prepareStatement(sql);
+            ResultSet rs = stmt.executeQuery()) {
+
+            System.out.printf("%-20s | %-12s | %s%n",
+                    "periodno", "status", "categoryrows");
+            System.out.println("---------------------|--------------|-------------");
+
+            boolean found = false;
+            while (rs.next()) {
+                found = true;
+                System.out.printf("%-20s | %-12s | %d%n",
+                        rs.getString("periodno"),
+                        rs.getString("status"),
+                        rs.getInt("categoryrows"));
+            }
+
+            if (!found) {
+                System.out.println("No Draft periods without category rows found.");
+            }
+
+            return found;
+        }
+    }
+
 
     private void deleteDraftPeriod(String periodNo) throws SQLException {
         boolean originalAutoCommit = conn.getAutoCommit();
@@ -56,15 +99,12 @@ public class DeletePeriods {
             }
 
             if (hasCategoryRows(periodNo)) {
-                System.out.println("This Draft period has category rows.");
+                System.out.println("This period has category rows.");
                 conn.rollback();
                 return;
             }
 
-            System.out.printf(
-                    "Delete Draft period %s? Type DELETE to confirm: ",
-                    periodNo
-            );
+            System.out.printf("Delete period %s? Type DELETE to confirm: ", periodNo);
 
             if (!"DELETE".equals(s.nextLine().trim())) {
                 System.out.println("Deletion cancelled.");
@@ -72,7 +112,7 @@ public class DeletePeriods {
                 return;
             }
 
-            String sql = "DELETE FROM periodcount WHERE periodno = ? AND status = ?";
+            String sql = "DELETE FROM countperiod WHERE periodno = ? AND status = ?";
             try (PreparedStatement stmt = conn.prepareStatement(sql)) {
                 stmt.setString(1, periodNo);
                 stmt.setString(2, "Draft");
@@ -98,7 +138,7 @@ public class DeletePeriods {
     private String getAndLockStatus(String periodNo) throws SQLException {
         String sql = """
                 SELECT status
-                FROM periodcount
+                FROM countperiod
                 WHERE periodno = ?
                 FOR UPDATE
                 """;
@@ -113,7 +153,7 @@ public class DeletePeriods {
     }
 
     private boolean hasCategoryRows(String periodNo) throws SQLException {
-        String sql = "SELECT 1 FROM " + CATEGORY_TABLE + " WHERE periodno = ?";
+        String sql = "SELECT 1 FROM vehcount WHERE periodno = ?";
 
         try (PreparedStatement stmt = conn.prepareStatement(sql)) {
             stmt.setString(1, periodNo);
