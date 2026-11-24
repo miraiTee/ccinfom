@@ -37,8 +37,6 @@ public class CreatePeriods {
     }
 
     public void run() {
-        flush();
-
         if (activePoints.isEmpty()){
             System.err.println("No active devices/points for this database");
             return;
