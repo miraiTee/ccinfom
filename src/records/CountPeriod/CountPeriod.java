@@ -41,7 +41,6 @@ public class CountPeriod implements Comparable<CountPeriod> {
 
         validateStartToEnd(startAt, endAt);
         validateMethod(method, devNo);
-        validateStatus(status, notes, revno);
 
         this.periodNo = periodNo;
         this.pointNo = pointNo;
@@ -61,7 +60,7 @@ public class CountPeriod implements Comparable<CountPeriod> {
 
     // New Count Period (from app)
     public CountPeriod(String periodNo, String pointNo, Direction directn, 
-        LocalDateTime startAt, String devNo){
+        LocalDateTime startAt, Method method, String devNo){
 
         // validateFieldLength(periodNo, 16);
         // validateFieldLength(pointNo, 12);
@@ -76,7 +75,7 @@ public class CountPeriod implements Comparable<CountPeriod> {
         this.startAt = startAt;
         this.endAt = startAt.plusMinutes(15);
 
-        this.method = Method.Device;
+        this.method = method;
         this.devNo = devNo;
 
         this.status = Status.Draft;
@@ -85,7 +84,6 @@ public class CountPeriod implements Comparable<CountPeriod> {
     
         validateStartToEnd(this.startAt, this.endAt);
         validateMethod(this.method, this.devNo);
-        validateStatus(this.status, this.notes, this.revno);
     }
 
     private void validateFieldLength(String string, int maxlength){
@@ -152,24 +150,6 @@ public class CountPeriod implements Comparable<CountPeriod> {
             throw new IllegalArgumentException("Device No contains a non-numeric character.");
     }
 
-    /***
-     * Validate status
-     * 
-     * @param status
-     * @param notes
-     * @param revNo
-     */
-    private void validateStatus(Status status, String notes, int revNo){
-        if (status == null)
-            throw new IllegalArgumentException("No status found.");
-
-        if (status == Status.Draft && notes == null)
-            throw new IllegalArgumentException("Draft must have notes.");
-
-        if (revNo < 1)
-            throw new IllegalArgumentException("RevNo must not be 0 or negative.");
-    }
-
     public PeriodNo getPeriodNo() { return periodNo; }
     public String getPointNo() { return pointNo; }
 
@@ -187,8 +167,6 @@ public class CountPeriod implements Comparable<CountPeriod> {
     public String getNotes() { return notes; };
 
     public int getRevNo() { return revno; };
-
-    public void setEndAt(LocalDateTime endAt) { this.endAt = endAt; }
 
     public boolean compare(CountPeriod countPeriod){
         return periodNo.equals(countPeriod.getPeriodNo());
@@ -212,4 +190,7 @@ public class CountPeriod implements Comparable<CountPeriod> {
                " | " + notes +
                " | " + revno;
     }
+
+
+
 }
