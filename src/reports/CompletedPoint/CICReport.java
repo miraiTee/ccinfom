@@ -66,7 +66,6 @@ public class CICReport {
         try{
             generateReport();
             printReport();
-            s.close();
         } catch (SQLException e){
             e.printStackTrace();
             throw new IllegalArgumentException("Failed generating report.");
@@ -77,7 +76,7 @@ public class CICReport {
         String sql = """ 
         SELECT DISTINCT pointno 
         FROM countperiod 
-        WHERE status = 'Completed/' 
+        WHERE status = 'Completed' 
         """;
 
         try (PreparedStatement stmt = conn.prepareStatement(sql);
